@@ -2,6 +2,9 @@ package com.example.TrabalhoRA3.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Instructor {
@@ -12,14 +15,17 @@ public class Instructor {
 
     private String name;
 
-    private String expertise;
-
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    @JsonManagedReference("instructor-courses")
     private List<Course> courses;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
+    @JsonBackReference("department-instructors")
     private Department department;
+
+    @Transient
+    private Long departmentId;
 
     // Getters and Setters
     public Long getId() {
@@ -38,14 +44,6 @@ public class Instructor {
         this.name = name;
     }
 
-    public String getExpertise() {
-        return expertise;
-    }
-
-    public void setExpertise(String expertise) {
-        this.expertise = expertise;
-    }
-
     public List<Course> getCourses() {
         return courses;
     }
@@ -60,5 +58,15 @@ public class Instructor {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    @JsonProperty("departmentId")
+    public Long getDepartmentId() {
+        return department != null ? department.getId() : departmentId;
+    }
+
+    // Adicionar este método:
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 }

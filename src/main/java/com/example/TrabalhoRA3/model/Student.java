@@ -2,6 +2,7 @@ package com.example.TrabalhoRA3.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Student {
@@ -15,6 +16,7 @@ public class Student {
     private String email;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @JsonManagedReference("student-enrollments")
     private List<Enrollment> enrollments;
 
     // Getters and Setters

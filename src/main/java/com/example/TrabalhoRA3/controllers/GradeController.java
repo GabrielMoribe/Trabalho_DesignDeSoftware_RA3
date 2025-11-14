@@ -1,7 +1,9 @@
 package com.example.TrabalhoRA3.controllers;
 
 import com.example.TrabalhoRA3.model.Grade;
+import com.example.TrabalhoRA3.model.Enrollment;
 import com.example.TrabalhoRA3.services.GradeService;
+import com.example.TrabalhoRA3.services.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,9 @@ public class GradeController {
     @Autowired
     private GradeService gradeService;
 
+    @Autowired
+    private EnrollmentService enrollmentService;
+
     @GetMapping
     public List<Grade> getAllGrades() {
         return gradeService.findAll();
@@ -28,8 +33,19 @@ public class GradeController {
     }
 
     @PostMapping
-    public Grade createGrade(@RequestBody Grade grade) {
-        return gradeService.save(grade);
+    public ResponseEntity<Grade> createGrade(@RequestBody Grade grade) {
+        // Buscar Enrollment pelo ID se fornecido
+        if (grade.getEnrollmentId() != null) {
+            Optional<Enrollment> enrollment = enrollmentService.findById(grade.getEnrollmentId());
+            if (enrollment.isPresent()) {
+                grade.setEnrollment(enrollment.get());
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
+        Grade savedGrade = gradeService.save(grade);
+        return ResponseEntity.ok(savedGrade);
     }
 
     @PutMapping("/{id}")
@@ -37,6 +53,17 @@ public class GradeController {
         if (!gradeService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        // Buscar Enrollment pelo ID se fornecido
+        if (grade.getEnrollmentId() != null) {
+            Optional<Enrollment> enrollment = enrollmentService.findById(grade.getEnrollmentId());
+            if (enrollment.isPresent()) {
+                grade.setEnrollment(enrollment.get());
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
         grade.setId(id);
         return ResponseEntity.ok(gradeService.save(grade));
     }

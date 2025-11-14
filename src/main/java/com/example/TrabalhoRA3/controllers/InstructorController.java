@@ -1,7 +1,9 @@
 package com.example.TrabalhoRA3.controllers;
 
 import com.example.TrabalhoRA3.model.Instructor;
+import com.example.TrabalhoRA3.model.Department;
 import com.example.TrabalhoRA3.services.InstructorService;
+import com.example.TrabalhoRA3.services.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,9 @@ public class InstructorController {
     @Autowired
     private InstructorService instructorService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     @GetMapping
     public List<Instructor> getAllInstructors() {
         return instructorService.findAll();
@@ -28,8 +33,19 @@ public class InstructorController {
     }
 
     @PostMapping
-    public Instructor createInstructor(@RequestBody Instructor instructor) {
-        return instructorService.save(instructor);
+    public ResponseEntity<Instructor> createInstructor(@RequestBody Instructor instructor) {
+        // Buscar Department pelo ID se fornecido
+        if (instructor.getDepartmentId() != null) {
+            Optional<Department> department = departmentService.findById(instructor.getDepartmentId());
+            if (department.isPresent()) {
+                instructor.setDepartment(department.get());
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
+        Instructor savedInstructor = instructorService.save(instructor);
+        return ResponseEntity.ok(savedInstructor);
     }
 
     @PutMapping("/{id}")
@@ -37,6 +53,17 @@ public class InstructorController {
         if (!instructorService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        // Buscar Department pelo ID se fornecido
+        if (instructor.getDepartmentId() != null) {
+            Optional<Department> department = departmentService.findById(instructor.getDepartmentId());
+            if (department.isPresent()) {
+                instructor.setDepartment(department.get());
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
         instructor.setId(id);
         return ResponseEntity.ok(instructorService.save(instructor));
     }

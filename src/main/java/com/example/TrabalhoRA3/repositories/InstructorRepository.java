@@ -12,8 +12,8 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
     @Query("SELECT i FROM Instructor i WHERE i.name = :name")
     List<Instructor> findByName(@Param("name") String name);
 
-    @Query("SELECT i FROM Instructor i WHERE i.expertise LIKE %:expertise%")
-    List<Instructor> findByExpertiseContaining(@Param("expertise") String expertise);
+//    @Query("SELECT i FROM Instructor i WHERE i.expertise LIKE %:expertise%")
+//    List<Instructor> findByExpertiseContaining(@Param("expertise") String expertise);
 
     @Query("DELETE FROM Instructor i WHERE i.id = :id")
     void deleteByIdWithQuery(@Param("id") Long id);

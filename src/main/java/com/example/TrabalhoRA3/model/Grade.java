@@ -1,6 +1,8 @@
 package com.example.TrabalhoRA3.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Grade {
@@ -11,11 +13,18 @@ public class Grade {
 
     @ManyToOne
     @JoinColumn(name = "enrollment_id")
+    @JsonBackReference("enrollment-grades")
     private Enrollment enrollment;
 
+    @Column(name = "grade_value")
     private Double value;
 
     private String feedback;
+
+    // Campo auxiliar para receber ID via JSON
+    @Transient
+    @JsonProperty("enrollmentId")
+    private Long enrollmentId;
 
     // Getters and Setters
     public Long getId() {
@@ -48,5 +57,14 @@ public class Grade {
 
     public void setFeedback(String feedback) {
         this.feedback = feedback;
+    }
+
+    // Getters e Setters para campo auxiliar
+    public Long getEnrollmentId() {
+        return enrollment != null ? enrollment.getId() : enrollmentId;
+    }
+
+    public void setEnrollmentId(Long enrollmentId) {
+        this.enrollmentId = enrollmentId;
     }
 }
