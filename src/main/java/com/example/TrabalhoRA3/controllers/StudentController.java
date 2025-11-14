@@ -29,17 +29,18 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student createStudent(@RequestBody Student student) {
-        return studentService.save(student);
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        Student createdStudent = studentService.saveStudent(student.getName(), student.getEmail());
+        return ResponseEntity.ok(createdStudent);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+    public ResponseEntity<Void> updateStudent(@PathVariable Long id, @RequestBody Student student) {
         if (!studentService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        student.setId(id);
-        return ResponseEntity.ok(studentService.save(student));
+        studentService.updateStudent(id, student.getName(), student.getEmail());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

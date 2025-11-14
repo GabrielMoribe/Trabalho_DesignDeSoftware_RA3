@@ -15,18 +15,31 @@ public class EnrollmentService {
     private EnrollmentRepository enrollmentRepository;
 
     public List<Enrollment> findAll() {
-        return enrollmentRepository.findAll();
+        return enrollmentRepository.findAllEnrollments();
     }
 
     public Optional<Enrollment> findById(Long id) {
-        return enrollmentRepository.findById(id);
+        return enrollmentRepository.findEnrollmentById(id);
     }
 
-    public Enrollment save(Enrollment enrollment) {
-        return enrollmentRepository.save(enrollment);
+    public Enrollment saveEnrollment(Long studentId, Long courseId, java.time.LocalDate enrollmentDate) {
+        enrollmentRepository.insertEnrollment(studentId, courseId, enrollmentDate);
+        return enrollmentRepository.findLastInsertedEnrollment(studentId, courseId).orElse(null);
+    }
+
+    public void updateEnrollment(Long id, Long studentId, Long courseId, java.time.LocalDate enrollmentDate) {
+        enrollmentRepository.updateEnrollment(id, studentId, courseId, enrollmentDate);
     }
 
     public void deleteById(Long id) {
-        enrollmentRepository.deleteById(id);
+        enrollmentRepository.deleteEnrollmentById(id);
+    }
+
+    public List<Enrollment> findByStudentId(Long studentId) {
+        return enrollmentRepository.findByStudentId(studentId);
+    }
+
+    public List<Enrollment> findByCourseId(Long courseId) {
+        return enrollmentRepository.findByCourseId(courseId);
     }
 }

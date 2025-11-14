@@ -15,18 +15,27 @@ public class DepartmentService {
     private DepartmentRepository departmentRepository;
 
     public List<Department> findAll() {
-        return departmentRepository.findAll();
+        return departmentRepository.findAllDepartments();
     }
 
     public Optional<Department> findById(Long id) {
-        return departmentRepository.findById(id);
+        return departmentRepository.findDepartmentById(id);
     }
 
-    public Department save(Department department) {
-        return departmentRepository.save(department);
+    public Department saveDepartment(String name) {
+        departmentRepository.insertDepartment(name);
+        return departmentRepository.findLastInsertedDepartment(name).orElse(null);
+    }
+
+    public void updateDepartment(Long id, String name) {
+        departmentRepository.updateDepartment(id, name);
     }
 
     public void deleteById(Long id) {
-        departmentRepository.deleteById(id);
+        departmentRepository.deleteDepartmentById(id);
+    }
+
+    public List<Department> findByName(String name) {
+        return departmentRepository.findByName(name);
     }
 }

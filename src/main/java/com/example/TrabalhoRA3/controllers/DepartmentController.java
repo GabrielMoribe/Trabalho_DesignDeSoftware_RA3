@@ -28,17 +28,18 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public Department createDepartment(@RequestBody Department department) {
-        return departmentService.save(department);
+    public ResponseEntity<Department> createDepartment(@RequestBody Department department) {
+        Department createdDepartment = departmentService.saveDepartment(department.getName());
+        return ResponseEntity.ok(createdDepartment);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody Department department) {
+    public ResponseEntity<Void> updateDepartment(@PathVariable Long id, @RequestBody Department department) {
         if (!departmentService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        department.setId(id);
-        return ResponseEntity.ok(departmentService.save(department));
+        departmentService.updateDepartment(id, department.getName());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

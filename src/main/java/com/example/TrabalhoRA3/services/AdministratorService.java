@@ -1,9 +1,7 @@
 package com.example.TrabalhoRA3.services;
 
 import com.example.TrabalhoRA3.model.Administrator;
-import com.example.TrabalhoRA3.model.Student;
 import com.example.TrabalhoRA3.repositories.AdministratorRepository;
-import com.example.TrabalhoRA3.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +15,32 @@ public class AdministratorService {
     private AdministratorRepository administratorRepository;
 
     public List<Administrator> findAll() {
-        return administratorRepository.findAll();
+        return administratorRepository.findAllAdministrators();
     }
 
     public Optional<Administrator> findById(Long id) {
-        return administratorRepository.findById(id);
+        return administratorRepository.findAdministratorById(id);
     }
 
-    public Administrator save(Administrator administrator) {
-        return administratorRepository.save(administrator);
+    public Administrator saveAdministrator(String name, String role) {
+        administratorRepository.insertAdministrator(name, role);
+        return administratorRepository.findLastInsertedAdministrator(name, role).orElse(null);
+    }
+
+    public void updateAdministrator(Long id, String name, String role) {
+        administratorRepository.updateAdministrator(id, name, role);
     }
 
     public void deleteById(Long id) {
-        administratorRepository.deleteById(id);
+        administratorRepository.deleteAdministratorById(id);
+    }
+
+    public List<Administrator> findByName(String name) {
+        return administratorRepository.findByName(name);
+    }
+
+    public List<Administrator> findByRole(String role) {
+        return administratorRepository.findByRole(role);
     }
 }
 

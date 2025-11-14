@@ -3,28 +3,32 @@ package com.example.TrabalhoRA3.model;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Data;
 
 @Entity
+//@Data
 public class Grade {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String feedback;
 
+    //ManyToOne com Enrollment (várias notas podem pertencer a uma matrícula)
     @ManyToOne
     @JoinColumn(name = "enrollment_id")
     @JsonBackReference("enrollment-grades")
     private Enrollment enrollment;
 
+    //Estava dando conflito com palavra reservada do SQL
     @Column(name = "grade_value")
     private Double value;
-
-    private String feedback;
 
     // Campo auxiliar para receber ID via JSON
     @Transient
     @JsonProperty("enrollmentId")
     private Long enrollmentId;
+
 
     // Getters and Setters
     public Long getId() {

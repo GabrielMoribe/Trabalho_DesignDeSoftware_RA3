@@ -34,38 +34,34 @@ public class InstructorController {
 
     @PostMapping
     public ResponseEntity<Instructor> createInstructor(@RequestBody Instructor instructor) {
-        // Buscar Department pelo ID se fornecido
+        // Verificar se Department existe se fornecido
         if (instructor.getDepartmentId() != null) {
             Optional<Department> department = departmentService.findById(instructor.getDepartmentId());
-            if (department.isPresent()) {
-                instructor.setDepartment(department.get());
-            } else {
+            if (!department.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        Instructor savedInstructor = instructorService.save(instructor);
-        return ResponseEntity.ok(savedInstructor);
+        Instructor createdInstructor = instructorService.saveInstructor(instructor.getName(), instructor.getDepartmentId());
+        return ResponseEntity.ok(createdInstructor);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Instructor> updateInstructor(@PathVariable Long id, @RequestBody Instructor instructor) {
+    public ResponseEntity<Void> updateInstructor(@PathVariable Long id, @RequestBody Instructor instructor) {
         if (!instructorService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        // Buscar Department pelo ID se fornecido
+        // Verificar se Department existe se fornecido
         if (instructor.getDepartmentId() != null) {
             Optional<Department> department = departmentService.findById(instructor.getDepartmentId());
-            if (department.isPresent()) {
-                instructor.setDepartment(department.get());
-            } else {
+            if (!department.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        instructor.setId(id);
-        return ResponseEntity.ok(instructorService.save(instructor));
+        instructorService.updateInstructor(id, instructor.getName(), instructor.getDepartmentId());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

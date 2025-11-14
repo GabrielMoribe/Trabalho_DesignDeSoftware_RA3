@@ -6,26 +6,30 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Data;
 
 @Entity
+//@Data
 public class Enrollment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private LocalDate enrollmentDate;
 
+    //ManyToOne com Student e Course (1 matrícula pertence a 1 aluno e 1 curso)
     @ManyToOne
     @JoinColumn(name = "student_id")
     @JsonBackReference("student-enrollments")
     private Student student;
 
+    //ManyToOne com Course (1 matrícula pertence a 1 curso)
     @ManyToOne
     @JoinColumn(name = "course_id")
     @JsonBackReference("course-enrollments")
     private Course course;
 
-    private LocalDate enrollmentDate;
-
+    //OneToMany com Grade (1 matrícula pode ter muitas notas)
     @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL)
     @JsonManagedReference("enrollment-grades")
     private List<Grade> grades;
@@ -38,6 +42,7 @@ public class Enrollment {
     @Transient
     @JsonProperty("courseId")
     private Long courseId;
+
 
     // Getters and Setters
     public Long getId() {

@@ -5,29 +5,45 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Data;
 
 @Entity
+//@Data
 public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
     private String description;
 
+    //OneToMany com Matricul (1 curso pode ter muitas matrículas)
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference("course-enrollments")
     private List<Enrollment> enrollments;
 
+    //ManyToOne com Instructor (muitos cursos podem ter um instrutor)
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     @JsonBackReference("instructor-courses")
     private Instructor instructor;
 
+    // Campo auxiliar para receber o ID via JSON
     @Transient
     private Long instructorId;
+
+
+
+    // Getter para o campo auxiliar
+    @JsonProperty("instructorId")
+    public Long getInstructorId() {
+        return instructor != null ? instructor.getId() : instructorId;
+    }
+    // Setter para o campo auxiliar
+    public void setInstructorId(Long instructorId) {
+        this.instructorId = instructorId;
+    }
+
 
     // Getters and Setters
     public Long getId() {
@@ -70,13 +86,5 @@ public class Course {
         this.instructor = instructor;
     }
 
-    @JsonProperty("instructorId")
-    public Long getInstructorId() {
-        return instructor != null ? instructor.getId() : instructorId;
-    }
 
-    // Adicionar este método:
-    public void setInstructorId(Long instructorId) {
-        this.instructorId = instructorId;
-    }
 }

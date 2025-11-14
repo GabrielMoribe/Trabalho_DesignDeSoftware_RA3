@@ -1,19 +1,19 @@
 package com.example.TrabalhoRA3.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+//@Data
 public class Administrator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
     private String role;
 
-    // Getters and Setters
+
     public Long getId() {
         return id;
     }

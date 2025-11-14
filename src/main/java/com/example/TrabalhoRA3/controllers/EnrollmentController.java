@@ -39,58 +39,50 @@ public class EnrollmentController {
 
     @PostMapping
     public ResponseEntity<Enrollment> createEnrollment(@RequestBody Enrollment enrollment) {
-        // Buscar Student pelo ID se fornecido
+        // Verificar se Student existe
         if (enrollment.getStudentId() != null) {
             Optional<Student> student = studentService.findById(enrollment.getStudentId());
-            if (student.isPresent()) {
-                enrollment.setStudent(student.get());
-            } else {
+            if (!student.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        // Buscar Course pelo ID se fornecido
+        // Verificar se Course existe
         if (enrollment.getCourseId() != null) {
             Optional<Course> course = courseService.findById(enrollment.getCourseId());
-            if (course.isPresent()) {
-                enrollment.setCourse(course.get());
-            } else {
+            if (!course.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        Enrollment savedEnrollment = enrollmentService.save(enrollment);
-        return ResponseEntity.ok(savedEnrollment);
+        Enrollment createdEnrollment = enrollmentService.saveEnrollment(enrollment.getStudentId(), enrollment.getCourseId(), enrollment.getEnrollmentDate());
+        return ResponseEntity.ok(createdEnrollment);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Enrollment> updateEnrollment(@PathVariable Long id, @RequestBody Enrollment enrollment) {
+    public ResponseEntity<Void> updateEnrollment(@PathVariable Long id, @RequestBody Enrollment enrollment) {
         if (!enrollmentService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        // Buscar Student pelo ID se fornecido
+        // Verificar se Student existe
         if (enrollment.getStudentId() != null) {
             Optional<Student> student = studentService.findById(enrollment.getStudentId());
-            if (student.isPresent()) {
-                enrollment.setStudent(student.get());
-            } else {
+            if (!student.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        // Buscar Course pelo ID se fornecido
+        // Verificar se Course existe
         if (enrollment.getCourseId() != null) {
             Optional<Course> course = courseService.findById(enrollment.getCourseId());
-            if (course.isPresent()) {
-                enrollment.setCourse(course.get());
-            } else {
+            if (!course.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        enrollment.setId(id);
-        return ResponseEntity.ok(enrollmentService.save(enrollment));
+        enrollmentService.updateEnrollment(id, enrollment.getStudentId(), enrollment.getCourseId(), enrollment.getEnrollmentDate());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

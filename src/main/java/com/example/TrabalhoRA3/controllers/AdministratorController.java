@@ -1,9 +1,7 @@
 package com.example.TrabalhoRA3.controllers;
 
 import com.example.TrabalhoRA3.model.Administrator;
-import com.example.TrabalhoRA3.model.Department;
 import com.example.TrabalhoRA3.services.AdministratorService;
-import com.example.TrabalhoRA3.services.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,16 +28,18 @@ public class AdministratorController {
     }
 
     @PostMapping
-    public Administrator createAdministrator(@RequestBody Administrator administrator) {
-        return administratorService.save(administrator);
+    public ResponseEntity<Administrator> createAdministrator(@RequestBody Administrator administrator) {
+        Administrator createdAdmin = administratorService.saveAdministrator(administrator.getName(), administrator.getRole());
+        return ResponseEntity.ok(createdAdmin);
     }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Administrator> updateAdministrator(@PathVariable Long id, @RequestBody Administrator administrator) {
+    public ResponseEntity<Void> updateAdministrator(@PathVariable Long id, @RequestBody Administrator administrator) {
         if (!administratorService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        administrator.setId(id);
-        return ResponseEntity.ok(administratorService.save(administrator));
+        administratorService.updateAdministrator(id, administrator.getName(), administrator.getRole());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

@@ -34,38 +34,34 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<Course> createCourse(@RequestBody Course course) {
-        // Buscar Instructor pelo ID se fornecido
+        // Verificar se instructor existe se fornecido
         if (course.getInstructorId() != null) {
             Optional<Instructor> instructor = instructorService.findById(course.getInstructorId());
-            if (instructor.isPresent()) {
-                course.setInstructor(instructor.get());
-            } else {
+            if (!instructor.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        Course savedCourse = courseService.save(course);
-        return ResponseEntity.ok(savedCourse);
+        Course createdCourse = courseService.saveCourse(course.getName(), course.getDescription(), course.getInstructorId());
+        return ResponseEntity.ok(createdCourse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Course> updateCourse(@PathVariable Long id, @RequestBody Course course) {
+    public ResponseEntity<Void> updateCourse(@PathVariable Long id, @RequestBody Course course) {
         if (!courseService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        // Buscar Instructor pelo ID se fornecido
+        // Verificar se instructor existe se fornecido
         if (course.getInstructorId() != null) {
             Optional<Instructor> instructor = instructorService.findById(course.getInstructorId());
-            if (instructor.isPresent()) {
-                course.setInstructor(instructor.get());
-            } else {
+            if (!instructor.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        course.setId(id);
-        return ResponseEntity.ok(courseService.save(course));
+        courseService.updateCourse(id, course.getName(), course.getDescription(), course.getInstructorId());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

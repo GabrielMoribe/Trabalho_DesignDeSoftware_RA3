@@ -15,18 +15,31 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     public List<Student> findAll() {
-        return studentRepository.findAll();
+        return studentRepository.findAllStudents();
     }
 
     public Optional<Student> findById(Long id) {
-        return studentRepository.findById(id);
+        return studentRepository.findStudentById(id);
     }
 
-    public Student save(Student student) {
-        return studentRepository.save(student);
+    public Student saveStudent(String name, String email) {
+        studentRepository.insertStudent(name, email);
+        return studentRepository.findLastInsertedStudent(name, email).orElse(null);
+    }
+
+    public void updateStudent(Long id, String name, String email) {
+        studentRepository.updateStudent(id, name, email);
     }
 
     public void deleteById(Long id) {
-        studentRepository.deleteById(id);
+        studentRepository.deleteStudentById(id);
+    }
+
+    public List<Student> findByName(String name) {
+        return studentRepository.findByName(name);
+    }
+
+    public Student findByEmail(String email) {
+        return studentRepository.findByEmail(email);
     }
 }

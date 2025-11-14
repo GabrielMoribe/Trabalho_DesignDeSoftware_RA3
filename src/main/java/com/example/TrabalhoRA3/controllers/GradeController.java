@@ -34,38 +34,34 @@ public class GradeController {
 
     @PostMapping
     public ResponseEntity<Grade> createGrade(@RequestBody Grade grade) {
-        // Buscar Enrollment pelo ID se fornecido
+        // Verificar se Enrollment existe
         if (grade.getEnrollmentId() != null) {
             Optional<Enrollment> enrollment = enrollmentService.findById(grade.getEnrollmentId());
-            if (enrollment.isPresent()) {
-                grade.setEnrollment(enrollment.get());
-            } else {
+            if (!enrollment.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        Grade savedGrade = gradeService.save(grade);
-        return ResponseEntity.ok(savedGrade);
+        Grade createdGrade = gradeService.saveGrade(grade.getEnrollmentId(), grade.getValue(), grade.getFeedback());
+        return ResponseEntity.ok(createdGrade);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Grade> updateGrade(@PathVariable Long id, @RequestBody Grade grade) {
+    public ResponseEntity<Void> updateGrade(@PathVariable Long id, @RequestBody Grade grade) {
         if (!gradeService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        // Buscar Enrollment pelo ID se fornecido
+        // Verificar se Enrollment existe
         if (grade.getEnrollmentId() != null) {
             Optional<Enrollment> enrollment = enrollmentService.findById(grade.getEnrollmentId());
-            if (enrollment.isPresent()) {
-                grade.setEnrollment(enrollment.get());
-            } else {
+            if (!enrollment.isPresent()) {
                 return ResponseEntity.badRequest().build();
             }
         }
 
-        grade.setId(id);
-        return ResponseEntity.ok(gradeService.save(grade));
+        gradeService.updateGrade(id, grade.getEnrollmentId(), grade.getValue(), grade.getFeedback());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

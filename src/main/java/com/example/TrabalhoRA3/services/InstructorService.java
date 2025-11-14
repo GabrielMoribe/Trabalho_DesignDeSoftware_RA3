@@ -15,18 +15,31 @@ public class InstructorService {
     private InstructorRepository instructorRepository;
 
     public List<Instructor> findAll() {
-        return instructorRepository.findAll();
+        return instructorRepository.findAllInstructors();
     }
 
     public Optional<Instructor> findById(Long id) {
-        return instructorRepository.findById(id);
+        return instructorRepository.findInstructorById(id);
     }
 
-    public Instructor save(Instructor instructor) {
-        return instructorRepository.save(instructor);
+    public Instructor saveInstructor(String name, Long departmentId) {
+        instructorRepository.insertInstructor(name, departmentId);
+        return instructorRepository.findLastInsertedInstructor(name).orElse(null);
+    }
+
+    public void updateInstructor(Long id, String name, Long departmentId) {
+        instructorRepository.updateInstructor(id, name, departmentId);
     }
 
     public void deleteById(Long id) {
-        instructorRepository.deleteById(id);
+        instructorRepository.deleteInstructorById(id);
+    }
+
+    public List<Instructor> findByDepartmentId(Long departmentId) {
+        return instructorRepository.findByDepartmentId(departmentId);
+    }
+
+    public List<Instructor> findByName(String name) {
+        return instructorRepository.findByName(name);
     }
 }

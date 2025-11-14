@@ -15,18 +15,32 @@ public class GradeService {
     private GradeRepository gradeRepository;
 
     public List<Grade> findAll() {
-        return gradeRepository.findAll();
+        return gradeRepository.findAllGrades();
     }
 
     public Optional<Grade> findById(Long id) {
-        return gradeRepository.findById(id);
+        return gradeRepository.findGradeById(id);
     }
 
-    public Grade save(Grade grade) {
-        return gradeRepository.save(grade);
+    public Grade saveGrade(Long enrollmentId, Double value, String feedback) {
+        gradeRepository.insertGrade(enrollmentId, value, feedback);
+        // Buscar o grade recém-criado
+        return gradeRepository.findLastInsertedGrade(enrollmentId, value).orElse(null);
+    }
+
+    public void updateGrade(Long id, Long enrollmentId, Double value, String feedback) {
+        gradeRepository.updateGrade(id, enrollmentId, value, feedback);
     }
 
     public void deleteById(Long id) {
-        gradeRepository.deleteById(id);
+        gradeRepository.deleteGradeById(id);
+    }
+
+    public List<Grade> findByEnrollmentId(Long enrollmentId) {
+        return gradeRepository.findByEnrollmentId(enrollmentId);
+    }
+
+    public List<Grade> findByValueGreaterThanEqual(Double minValue) {
+        return gradeRepository.findByValueGreaterThanEqual(minValue);
     }
 }
